@@ -1,0 +1,112 @@
+﻿@model IEnumerable<Ds3App2.Models.JobCard>
+@using Ds3App2.Models
+@{
+    ApplicationDbContext db = new ApplicationDbContext();
+    ViewBag.Title = "GetJobCards";
+}
+
+<h2>Job Cards</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Reference)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mechanic)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateTimeStamp)
+        </th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reference)
+            </td>
+            <td>
+                @if (item.Mechanic == "Not Assigned")
+                {
+                    @Html.DisplayFor(modelItem => item.Mechanic)
+                }
+                else
+                {
+                    @db.Users.FirstOrDefault(u => u.Id == item.Mechanic).FirstName<span>&nbsp;</span>@db.Users.FirstOrDefault(u => u.Id == item.Mechanic).LastName
+                }
+
+            </td>
+            <td>
+                @item.DateTimeStamp.ToLongDateString()
+            </td>
+			<td>
+				@if (item.Mechanic == "Not Assigned")
+				{
+					<button onclick="addMechanic('@(item.Id)')" id="btnAdd" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus"></i> Assign Mechanic</button>
+
+				}
+				else
+				{
+					if (item.IsCompleted)
+					{
+			             <a href="@(Url.Action("CreateInvoice",new { id = item.Id }))" class="btn btn-outline-danger btn-sm"><i class="fas fa-file-invoice"></i> Create Invoice</a>@*<span>&nbsp;</span> <a class="btn btn-outline-success btn-sm" href="@(Url.Action("IndexAdmin","Bookings"))">Proceed</a>*@
+
+					}
+					else
+					{
+						<button onclick="addMechanic('@(item.Id)')" id="btnAdd" class="btn btn-outline-warning btn-sm"><i class="fas fa-exchange-alt"></i> Change Mechanic</button>
+						
+					}
+
+				}
+				<!-- Modal -->
+				<div class="modal fade" id="@(item.Id)_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Add Mechanic</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<label>Select Machenic</label>
+								@Html.DropDownList("mechanic", (SelectList)ViewBag.MechanicDropDown, new { @class = "form-control", @id = item.Id })
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-danger" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+								<button onclick="Add('@item.Id')" type="button" class="btn btn-outline-success"><i class="fa fa-save"></i> Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</td>
+        </tr>
+    }
+
+</table>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+    function addMechanic(id) {
+        $('#' + id + '_modal').modal('show');
+    }
+
+    function Add(id) {
+        var foreman = $('#' + id).val();
+         $.ajax({
+                type: "Get",
+                url: "@Url.Action("AddMechanic")?array=" + id +"," + foreman,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+</script>

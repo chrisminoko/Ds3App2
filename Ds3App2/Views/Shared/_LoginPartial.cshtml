@@ -1,0 +1,42 @@
+﻿@using Microsoft.AspNet.Identity
+<style>
+    sup {
+    top: -.5em;
+    position: relative;
+    font-size:90%;
+    line-height: 0;
+    vertical-align: baseline;
+}
+</style>
+@if (Request.IsAuthenticated)
+{
+    var userId = User.Identity.GetUserId();
+    <div class="navbar-nav ml-auto">
+        <a class="nav-item nav-link" href="@(Url.Action("Index","Carts"))">
+            <i class="fas fa-shopping-cart"></i>
+            <sup><span class="badge badge-dark">@(Ds3App2.Extensions.Helper.ItemInCart(userId))</span></sup>
+        </a>
+        <a class="nav-item nav-link" href="#">
+            Hello @User.Identity.GetUserName()
+        </a>
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+        {
+            @Html.AntiForgeryToken()
+            <a class="nav-item nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+        }
+    </div>
+}
+else
+{
+
+     <div class="navbar-nav">
+        <a class="nav-item nav-link" href="@(Url.Action("Parts","Products"))">Parts</a>
+    </div>
+    <div class="navbar-nav">
+        <a class="nav-item nav-link" href="@(Url.Action("Index","Bookings"))">Bookings</a>
+    </div>
+    <div class="navbar-nav ml-auto">
+        <a class="nav-item nav-link" href="@(Url.Action("Register","Account"))">Register</a>
+        <a class="nav-item nav-link" href="@(Url.Action("Login","Account"))">Log in</a>
+    </div>
+}

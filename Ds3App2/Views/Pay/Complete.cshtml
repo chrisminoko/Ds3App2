@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewBag.Title = "Complete";
+}
+<style>
+    footer {
+        display: none
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+
+@{
+    int code = int.Parse(TempData["Status"].ToString());
+    string status;
+    switch (code.ToString())
+    {
+        case "-2":
+            status = "Unable to reconcile transaction";
+            break;
+        case "-1":
+            status = "Checksum Error. The values have been altered";
+            break;
+        case "0":
+            status = "Not Done";
+            break;
+        case "1":
+            status = "Payment successful.";
+            break;
+        case "2":
+            status = "Declined";
+            break;
+        case "3":
+            status = "Cancelled";
+            break;
+        case "4":
+            status = "User Cancelled";
+            break;
+        default:
+            status = $"Unknown Status({ code })";
+            break;
+    }
+}
+<div class="container custom-container text-center">
+    <h2>Transaction Results</h2>
+    @if (code == 1)
+    {
+        <i class="fa fa-check fa-10x  text-success"></i><br />
+        <h4 class=" text-success">
+            @(status)<br />
+            Order reference #@(TempData["Reference"])
+        </h4>
+        <br />
+        <p>
+            <a href="/" class="btn btn-outline-success">Home</a>
+        </p>
+    }
+    else
+    {
+        <i class="fa fa-times fa-10x  text-danger"></i><br />
+        <h4 class=" text-danger">
+            @(status)
+        </h4>
+        <br />
+        <p>
+            <a href="/" class="btn btn-outline-danger">Home</a>
+        </p>
+    }
+</div>

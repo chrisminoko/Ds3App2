@@ -1,0 +1,105 @@
+﻿@model IEnumerable<Ds3App2.Models.Booking>
+@using Ds3App2.Models
+@{
+    ApplicationDbContext context = new ApplicationDbContext();
+    ViewBag.Title = "Index";
+}
+<div class="row">
+    <div class="col-sm-6">
+        <h2>Bookings</h2>
+    </div>
+    <div class="col-sm-6">
+
+    </div>
+</div>
+
+
+<p>
+    <div class="row">
+        <div class="col-sm-6">
+            <a class="btn btn-primary" href="@(Url.Action("Create"))"><i class="fas fa-calendar"></i> Make a Booking</a>
+        </div>
+        <div class="col-sm-6">
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" name="search" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Reference)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ServiceType)
+        </th>
+        @*<th>
+            Cost(ZAR)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.Mileage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Reference)
+        </td>
+        <td>
+            @item.Date.ToLongDateString()
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ServiceType)
+        </td>
+        @*<td>
+            @if (Model.Count() > 0)
+            {
+                @context.ServiceType.FirstOrDefault(s => s.Type.Trim() == item.ServiceType.Trim()).Price.ToString("C")<br />
+                <p style="font-size:9px">excluding vat</p>
+            }
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.Mileage)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            <a href="@(Url.Action("Edit", new { id = item.Id }))"><i class="fas fa-edit" title="Edit"></i></a>&nbsp;
+            <a href="#" onclick="deleteItem('@item.Id')"><i class="fas fa-trash text-danger" title="Delete"></i></a>
+        </td>
+    </tr>
+    }
+
+</table>
+<script>
+     function deleteItem(id) {
+        var doDelete = confirm("Are you sure you want to delete this?");
+        if (doDelete) {
+            $.ajax({
+                type: "Post",
+                url: "@Url.Action("Delete")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+        }
+    }
+</script>

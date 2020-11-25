@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/themes/base/all.css" rel="stylesheet" />
+    <link href="~/Content/fontawesome-all.min.css" rel="stylesheet" />
+    <style>
+        body{
+            margin-top: 40px
+        }
+        .navbar {
+            background-color: #80797c !important;
+        }
+
+        .btn-outline-light {
+            color: #545354 !important;
+            border-color: #545354 !important;
+            background-color: white !important;
+        }
+
+            .btn-outline-light:hover {
+                color: white !important;
+                border-color: #545354 !important;
+                background-color: #545354 !important;
+            }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        .navbar-brand {
+            color: white !important;
+        }
+
+        .cust {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a href="@Url.Action("Index", "Home")" class="navbar-brand">
+                <img src="~/Image/log.png" title="title" alt="additional title" />
+            </a>
+            <a class="navbar-brand" href="\">AG AUTO SHOP</a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    if (User.IsInRole("Admin"))
+                    {
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Adminstration Tab
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="@(Url.Action("User","Users"))">Users</a>
+                                    <a class="dropdown-item" href="@(Url.Action("IndexAdmin","Bookings"))">Bookings</a>
+                                    <a class="dropdown-item" href="@(Url.Action("Index","Products"))">Products</a>
+                                    <a class="dropdown-item" href="@(Url.Action("GetJobCards","JobCard"))">Job Cards</a>
+                                    <a class="dropdown-item" href="@(Url.Action("Index","Invoice"))">Invoices</a>
+                                    <a class="dropdown-item" href="@(Url.Action("IndexAdmin","Orders"))">Orders</a>
+                                    <a class="dropdown-item" href="@(Url.Action("Index","Makes"))">Makes</a>
+                                    <a class="dropdown-item" href="@(Url.Action("Index","ServiceTypes"))">Service Types</a>
+                                    <a class="dropdown-item" href="@(Url.Action("Index","JobTasks"))">Tasks</a>
+                                </div>
+                            </li>
+                        </ul>
+                    }
+                    if (User.IsInRole("Customer"))
+                    {
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link" href="@(Url.Action("Edit","Customers"))">My Profile</a>
+                        </div>
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link" href="@(Url.Action("Index","Bookings"))">Bookings</a>
+                        </div>
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link" href="@(Url.Action("Parts","Products"))">Parts</a>
+                        </div>
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link" href="@(Url.Action("IndexCustomer","Invoice"))">Invoices</a>
+                        </div>
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link" href="@(Url.Action("Index","Orders"))">Orders</a>
+                        </div>
+                    }
+                    if (User.IsInRole("Mechanic"))
+                    {
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link" href="@(Url.Action("GetForemeansJobCards","JobCard"))">Job Cards</a>
+                        </div>
+                    }
+                }
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

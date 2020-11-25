@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Ds3App2.Models.JobCard>
+@using Ds3App2.Models
+@{
+    ApplicationDbContext db = new ApplicationDbContext();
+    ViewBag.Title = "GetJobCards";
+}
+
+<h2>My Job Cards</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Reference)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mechanic)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateTimeStamp)
+        </th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reference)
+            </td>
+            <td>
+                @if (item.Mechanic == "Not assigned")
+                {
+                    @Html.DisplayFor(modelItem => item.Mechanic)
+                }
+                else
+                {
+                    @db.Users.FirstOrDefault(u => u.Id == item.Mechanic).FirstName<span>&nbsp;</span>@db.Users.FirstOrDefault(u => u.Id == item.Mechanic).LastName
+                }
+
+            </td>
+            <td>
+                @item.DateTimeStamp.ToLongDateString()
+            </td>
+            <td>
+                @if (item.IsCompleted)
+                {
+                    <button disabled href="#" class="btn btn-outline-success btn-sm">Tasks Completed</button>
+
+                }
+                else
+                {
+                    <a href="@(Url.Action("GetForemeansJobCardTasks",new { id = item.Id }))" class="btn btn-outline-success btn-sm">Update Tasks</a>
+
+                }
+            </td>
+        </tr>
+    }
+
+</table>

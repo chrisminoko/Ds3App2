@@ -1,0 +1,212 @@
+﻿@model IEnumerable<Ds3App2.Models.Booking>
+@using Ds3App2.Models
+@{
+    ApplicationDbContext context = new ApplicationDbContext();
+    ViewBag.Title = "Index";
+}
+
+<h2>Bookings</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Reference)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ServiceType)
+        </th>
+        @*<th>
+            Cost(ZAR)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.Mileage)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reference)
+            </td>
+            <td>
+                @item.Date.ToLongDateString()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceType)
+            </td>
+            @*<td>
+                @if (Model.Count() > 0)
+                {
+                    @context.ServiceType.FirstOrDefault(s => s.Type.Trim() == item.ServiceType.Trim()).Price.ToString("C")<br />
+                    <p style="font-size:9px">excluding vat</p>
+                }
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.Mileage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+			<td>
+				@if (item.Status == "Pending")
+				{
+					<a onclick="openModal('@item.Id')" class="btn btn-outline-success" href="#" id="btnJobCard"><i class="fas fa-check" title="Approve"></i> Approve</a>
+				}
+				else if (item.Status == "Approved")
+				{
+					if (item.HasJobCard)
+					{
+						if (!item.CheckIn && !item.CheckOut)
+						{
+							<a class="btn btn-outline-success btn-sm" href="@(Url.Action("Create","JobCard",new { id = item.Id }))"> Add jobcard</a><span>&nbsp;</span><a onclick="checkInModal('@(item.Id)')" href="#" class="btn btn-outline-success btn-sm">Check in vehicle</a>
+						}
+						else if (item.CheckIn && !item.CheckOut)
+						{
+							<a class="btn btn-outline-success btn-sm" href="@(Url.Action("Create","JobCard",new { id = item.Id }))"> Add jobcard</a><span>&nbsp;</span><a onclick="checkOutModal('@(item.Id)')" href="#" class="btn btn-outline-success btn-sm">Check out vehicle</a>
+						}
+						else
+						{
+							<a class="btn btn-outline-danger btn-sm" href="@(Url.Action("Index","Invoice"))">Invoices</a>
+							@*<a href="@(Url.Action("CreateInvoice",new { id = item.Id }))" class="btn btn-outline-danger btn-sm"><i class="fas fa-file-invoice"></i> Create Invoice</a>*@<span>&nbsp;</span><button disabled class="btn btn-outline-success btn-sm">Complete</button>
+						}
+					}
+					else
+					{
+						@*<a class="btn btn-outline-success" href="@(Url.Action("Create","JobCard",new { id = item.Id }))"><i class="fas fa-plus" title="Add jobcard"></i> Add jobcard</a>*@
+						<a class="btn btn-outline-success btn-sm" href="@(Url.Action("Create","JobCard",new { id = item.Id }))"> @*View jobcard*@</a><span>&nbsp;</span><a onclick="checkInModal('@(item.Id)')" href="#" class="btn btn-outline-success btn-sm">Check in vehicle</a>
+					}
+				}
+				<div class="modal fade" id="@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								Are you sure you want to approve this?
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+								<a onclick="deleteItem('@item.Id')" class="btn btn-outline-success"><i class="fa fa-check"></i> Approve</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="@(item.Id)_checkInModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Check in vehicle</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								Click confirm to check in vehicle.
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+								<a href="#" onclick="checkIn('@item.Id')" class="btn btn-outline-success"><i class="fa fa-check"></i> Confirm</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="@(item.Id)_checkOutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Check out vehicle</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								Click confirm to check out vehicle.
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+								<a href="#" onclick="checkOut('@item.Id')" class="btn btn-outline-success"><i class="fa fa-check"></i> Confirm</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</td>
+        </tr>
+    }
+
+</table>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+    function openModal(id) {
+         $('#' + id).modal('show');
+    }
+     function deleteItem(id) {
+      $.ajax({
+                type: "Post",
+                url: "@Url.Action("Approve")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+
+    function checkInModal(id) {
+        $('#' + id + '_checkInModal').modal('show');
+    }
+
+    function checkIn(id) {
+         $.ajax({
+                type: "Post",
+                url: "@Url.Action("CheckIn")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+
+    function checkOutModal(id) {
+        $('#' + id + '_checkOutModal').modal('show');
+    }
+
+    function checkOut(id) {
+         $.ajax({
+                type: "Post",
+                url: "@Url.Action("CheckOut")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+</script>

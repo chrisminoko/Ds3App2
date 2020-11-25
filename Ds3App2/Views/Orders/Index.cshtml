@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Ds3App2.Models.Order>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Orders</h2>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Reference)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.OrderDate)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Amount)
+        </th>
+
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Reference)
+        </td>
+
+        <td>
+            @(item.OrderDate.ToLongDateString())
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @(item.Amount.ToString("C"))
+        </td>
+
+        <td>
+           @if(item.Status == "Paid")
+           {
+               <a href="@(Url.Action("Track",new { id = item.Id }))" class="btn btn-outline-secondary btn-sm">Track Order</a>
+           }
+        </td>
+    </tr>
+}
+
+</table>

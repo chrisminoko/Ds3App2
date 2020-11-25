@@ -1,0 +1,321 @@
+﻿@model IEnumerable<Ds3App2.Models.Cart>
+
+@{
+    ViewBag.Title = "Index";
+    string reference = "";
+    if (Model.Count() > 0)
+    {
+        reference = Model.FirstOrDefault().Reference;
+    }
+
+}
+<style>
+    .hidden {
+        display: none;
+    }
+
+    li {
+        font-size: 18px;
+        list-style-type: none;
+    }
+
+    #results {
+        display: block;
+        text-align: center;
+    }
+
+    #paygate {
+        display: none;
+    }
+</style>
+<style>
+    img {
+        width: 50px;
+    }
+
+    .zoom:hover {
+        transform: scale(2.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+    }
+</style>
+
+
+@if (Model.Count() > 0)
+{
+    <h2>My Cart #@(reference)</h2>
+    <hr />
+    <a class="btn btn-outline-success btn-sm" href="#"><i class="fas fa-plus"></i></a> <span>: Add 1 item  &nbsp;|&nbsp;</span><a class="btn btn-outline-warning btn-sm" href="#"><i class="fas fa-minus"></i></a> <span>: Remove 1 item &nbsp;|&nbsp;</span><a class="btn btn-outline-danger btn-sm" href="#"><i class="fas fa-trash"></i></a> <span>: Remove all item &nbsp;|&nbsp;</span>@*<a class="btn btn-outline-dark btn-sm" href="#"><i class="fas fa-cubes"></i></a> <span>: Update quantity update by more then 1 item</span>*@
+    <hr />
+    <p>
+        <div class="row">
+            <div class="col-sm-3">
+                <a href="@(Url.Action("Parts","Products"))" class="btn btn-outline-dark">Continue shopping</a>
+            </div>
+            <div class="col-sm-3">
+                <a href="#" onclick="clearCart('@Model.FirstOrDefault().Reference')" class="btn btn-outline-danger">Clear cart</a>
+            </div>
+        </div>
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img class="zoom" src="~/ProductImages/@(item.Image)" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    <a class="btn btn-outline-success btn-sm" onclick="addItem('@item.ProductId')" title="Add 1 item" href="#"><i class="fas fa-plus"></i></a>&nbsp;<a onclick="removeItem('@item.ProductId')" title="Remove 1 item" class="btn btn-outline-warning btn-sm" href="#"><i class="fas fa-minus"></i></a>&nbsp;<a onclick="deleteItem('@item.ProductId')" title="Remove all item" class="btn btn-outline-danger btn-sm" href="#"><i class="fas fa-trash"></i></a>&nbsp;@*<a title="Update quantity update by more then 1 item" onclick="updateQuantity('@item.ProductId')" class="btn btn-outline-dark btn-sm" href="#"><i class="fas fa-cubes"></i></a>*@
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+else
+{
+    <h2>My Cart</h2>
+    <hr />
+    <a class="btn btn-outline-success btn-sm" href="#"><i class="fas fa-plus"></i></a> <span>: Add 1 item  &nbsp;|&nbsp;</span><a class="btn btn-outline-warning btn-sm" href="#"><i class="fas fa-minus"></i></a> <span>: Remove 1 item &nbsp;|&nbsp;</span>@*<a class="btn btn-outline-danger btn-sm" href="#"><i class="fas fa-trash"></i></a> <span>: Remove all item &nbsp;|&nbsp;</span><a class="btn btn-outline-dark btn-sm" href="#"><i class="fas fa-cubes"></i></a> <span>: Update quantity update by more then 1 item</span>*@
+    <hr />
+    <p>
+        <div class="row">
+            <div class="col-sm-3">
+                @*<button disabled href="#" class="btn btn-outline-success">Procced to pay</button>*@
+                <a class="btn btn-outline-success" href="@Url.Action("OnceOff", "Carts", new {reference })"> Procced to pay</a>
+            </div>
+            <div class="col-sm-3">
+                <a href="@(Url.Action("Parts","Products"))" class="btn btn-outline-dark">Begin shopping</a>
+            </div>
+            <div class="col-sm-3">
+                <button disabled href="#" class="btn btn-outline-danger">Clear cart</button>
+            </div>
+        </div>
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th></th>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align:center;color:lightgray">
+                <i class="fas fa-shopping-cart fa-4x"></i>
+                <h1 style="text-align:center;color:lightgray">Cart is empty</h1>
+            </td>
+        </tr>
+
+    </table>
+}
+
+<button id="btn-pay" class="btn btn-outline-success">Proceed to pay</button>
+
+<ul id="results"></ul>
+<div class="hidden">
+    <form action="https://secure.paygate.co.za/PayWeb3/process.trans" method="POST">
+        <input id="PAY_REQUEST_ID" name="PAY_REQUEST_ID" type="hidden" />
+        <input id="CHECKSUM" name="CHECKSUM" type="hidden" />
+        <input id="REDIRECT" type="submit" />
+    </form>
+</div>
+<div id="quantitymodal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Quantity</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Enter quantity
+                <input id="quantityId" type="number" class="form-control" />
+                <h6 id="modalerror" class="text-danger" style="display:none"></h6>
+                <input type="text" style="display:none" id="modalid" value="" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                <button id="btnSave" type="button" class="btn btn-outline-success"><i class="fa fa-save"></i> Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script>
+     function updateQuantity(id) {
+        $('#modalid').val(id);
+        $('#quantitymodal').modal('show');
+    }
+    $('#btnSave').click(function () {
+        if ($('#quantityId').val().trim().length == 0) {
+            $('#quantitymodal').modal('show');
+            $('#modalerror').show();
+            $('#modalerror').text('The quantity field is required.');
+            return;
+        }
+        $('#quantitymodal').modal('hide');
+        $('#modalerror').text('');
+        $('#modalerror').hide();
+        var qty = $('#quantityId').val();
+        var id = $('#modalid').val();
+        var model = {
+            id: id,
+            qty: qty
+        }
+         $.ajax({
+                type: "Post",
+                url: "@Url.Action("BulkUpdate")",
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(model),
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    })
+     function addItem(id) {
+      $.ajax({
+                type: "Get",
+                url: "@Url.Action("Create","Carts")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+      function removeItem(id) {
+      $.ajax({
+                type: "Get",
+                url: "@Url.Action("RemoveItem","Carts")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+     function deleteItem(id) {
+        var doDelete = confirm("Are you sure you want to remove all items?");
+        if (doDelete) {
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("RemoveAll","Carts")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+        }
+    }
+     function clearCart(reference) {
+        var doDelete = confirm("Are you sure you want to clear the cart?");
+        if (doDelete) {
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("ClearCart","Carts")?reference=" + reference,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+        }
+    }
+
+    $('#btn-pay').on('click', function () {
+        let reference = '@(reference)';
+        let node = document.createElement("li");
+        node.innerText = "Processing...";
+        document.querySelector("#results").appendChild(node);
+        $.get(`/pay/getrequest?reference=` + reference)
+            .done(data => success(data))
+            .fail(err => error(err));
+    });
+
+    function success(data) {
+        let requestNode = document.createElement("li");
+        requestNode.innerText = "Request retrieved";
+        document.querySelector("#results").appendChild(requestNode);
+
+        requestNode.innerText = data.message;
+        if (data.success) {
+            $("#PAY_REQUEST_ID").val(data.results.PAY_REQUEST_ID);
+            $("#CHECKSUM").val(data.results.CHECKSUM);
+
+
+            let redirectNode = document.createElement("li");
+            redirectNode.innerText = "Redirecting...";
+            document.querySelector("#results").appendChild(redirectNode);
+
+            $("#REDIRECT").click();
+        }
+    }
+
+    function error(data) {
+        console.log("Error");
+        let node = document.createElement("li");
+        node.innerText = data;
+        document.querySelector("#results").appendChild(node);
+
+        $('#progress_check').hide();
+        $('#btn-pay').show();
+
+    }
+</script>
+
+

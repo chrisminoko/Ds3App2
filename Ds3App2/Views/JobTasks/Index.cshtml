@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Ds3App2.Models.JobTask>
+@using Ds3App2.Models
+@{
+    ViewBag.Title = "Index";
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+
+<h2>Task</h2>
+
+<p>
+    <a class="btn btn-primary" href="@(Url.Action("Create"))"><i class="fas fa-plus"></i> Add Task</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Job)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ServiceType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RatePerHour)
+        </th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job)
+            </td>
+            <td>
+                @db.ServiceType.Where(m => m.Id == item.ServiceType).FirstOrDefault().Type
+            </td>
+            <td>
+                @item.RatePerHour.ToString("C")
+            </td>
+            <td>
+                <a href="@(Url.Action("Edit", new { id = item.Id }))"><i class="fas fa-edit" title="Edit"></i></a>&nbsp;
+                <a href="#" onclick="deleteItem('@item.Id')"><i class="fas fa-trash text-danger" title="Delete"></i></a>
+            </td>
+        </tr>
+    }
+
+</table>
+<script>
+     function deleteItem(id) {
+        var doDelete = confirm("Are you sure you want to delete this?");
+        if (doDelete) {
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("Delete")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+        }
+    }
+</script>

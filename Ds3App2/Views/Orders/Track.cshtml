@@ -1,0 +1,99 @@
+﻿@model Ds3App2.Models.Order
+
+@{
+    ViewBag.Title = "Track";
+}
+
+<h2>Track Order : #@(Model.Reference)</h2>
+<h4>Order Date : @(Model.OrderDate.ToLongDateString())</h4>
+<h5>Status : @(Model.Status)</h5>
+<h5>Amount : @(Model.Amount.ToString("C"))</h5>
+<hr />
+@if (string.IsNullOrEmpty(Model.StatusTraking))
+{
+    <div class="row text-center">
+        <div class="col-sm-3 text-success">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>At Warehouse</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>With Courier</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Out on delivery</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Delivered</h6>
+        </div>
+    </div>
+}
+else if (Model.StatusTraking == "WithCourier")
+{
+    <div class="row text-center">
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>At Warehouse</h6>
+        </div>
+        <div class="col-sm-3 text-success">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>With Courier</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Out on delivery</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Delivered</h6>
+        </div>
+    </div>
+}
+else if (Model.StatusTraking == "OutOnDelivery")
+{
+    <div class="row text-center">
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>At Warehouse</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>With Courier</h6>
+        </div>
+        <div class="col-sm-3 text-success">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Out on delivery</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Delivered</h6>
+        </div>
+    </div>
+}
+else if (Model.StatusTraking == "Delivered")
+{
+    <div class="row text-center">
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>At Warehouse</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>With Courier</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Out on delivery</h6>
+        </div>
+        <div class="col-sm-3 text-success">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Delivered</h6>
+        </div>
+    </div>
+}
+<hr />
+<p>
+    <a class="btn btn-outline-danger" href="@(Url.Action("Index"))">Back</a>
+</p>

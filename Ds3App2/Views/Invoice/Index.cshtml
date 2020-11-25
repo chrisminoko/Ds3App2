@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Ds3App2.Models.Invoice>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Invoices</h2>
+
+<!--<p>
+	<div class="row">-->
+		@*<div class="col-sm-6">
+			<a class="btn btn-primary" href="@(Url.Action("Create"))"><i class="fas fa-calendar"></i> Make a Booking</a>
+		</div>*@
+		<!--<div class="col-sm-6">
+			<form class="form-inline my-2 my-lg-0">
+				<input class="form-control mr-sm-2" name="search" type="search" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+			</form>
+		</div>
+	</div>
+</p>-->
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Reference)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalMaterial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CostOfMaterial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalTasks)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CostOfLabour)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.InvoiceAmount)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Paid)
+        </th>
+        <th>Actions</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Reference)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TotalMaterial)
+        </td>
+        <td>
+            @(item.CostOfMaterial.ToString("C"))
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TotalTasks)
+        </td>
+        <td>
+            @(item.CostOfLabour.ToString("C"))
+        </td>
+        <td>
+            @(item.InvoiceAmount.ToString("C"))<br />
+            <p style="font-size:9px">excluding vat</p>
+        </td>
+
+        <td>
+            @if (item.Paid)
+            {
+                <b class="text-success">Paid</b>
+            }
+            else
+            {
+                <b class="text-danger">Not Paid</b>
+            }
+        </td>
+
+        <td>
+            <a class="btn btn-outline-info btn-sm" href="@(Url.Action("Details",new { id = item.Id }))">Manage Invoice</a>
+        </td>
+    </tr>
+}
+
+</table>

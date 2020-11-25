@@ -1,0 +1,151 @@
+﻿@model Ds3App2.ViewModels.InvoiceViewModel
+@using Ds3App2.Utilities
+@{
+    ViewBag.Title = "Details";
+    string status = "";
+    if (Model.Invoice.Paid)
+    {
+        status = "Paid";
+    }
+    else
+    {
+        status = "Not Paid";
+    }
+}
+<style>
+    @@media print {
+        #btnPaid {
+            display: none;
+        }
+
+        #btnPrint {
+            display: none;
+        }
+
+        #btnBack {
+            display: none;
+        }
+    }
+</style>
+<div id="id=" divPrint"">
+    <h2>Invoice</h2>
+    <hr />
+    <h4>
+        Invoice Date :  @(Model.Invoice.DateTimeStamp.ToLongDateString())<br />
+        Booking Reference: @(Model.Invoice.Reference)<br />
+        Status : @status
+    </h4>
+    <hr />
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                <b>Customer Details:</b><br />
+                @Model.Customer.FirstName @Model.Customer.LastName<br />
+                Email : @Model.Customer.Email<br />
+                Contact : @Model.Customer.Contact
+            </p>
+        </div>
+        @if (Model.Address != null)
+        {
+            <div class="col-sm-4">
+                <p>
+                    <b>Address:</b><br />
+                    @Model.Address.StreetNumber @Model.Address.StreetName<br />
+                    @Model.Address.Surburb<br />
+                    @Model.Address.City<br />
+                    @Model.Address.PostalCode
+                </p>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <p>
+                <b>Vehicle:</b><br />
+                Make : @Model.Vehicle.Make<br />
+                Model : @Model.Vehicle.Model<br />
+                VIN Number : @Model.Vehicle.Colour<br />
+                Registration Number : @Model.Vehicle.RegistrationNumber
+            </p>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <h4><b>Costs</b></h4>
+        </div>
+        <div class="col-sm-12">
+            Total Material : @(Model.Invoice.TotalMaterial)
+        </div>
+        <div class="col-sm-12">
+            Total Cost of Material : @(Model.Invoice.CostOfMaterial.ToString("C"))
+        </div>
+        <div class="col-sm-12">
+            Total Cost of Service : @(Model.Invoice.CostOfLabour.ToString("C"))
+        </div>
+        <div class="col-sm-12">
+            Tax : @((Model.Invoice.InvoiceAmount * WebConfigurationSettings.VAT).ToString("C"))
+        </div>
+        <div class="col-sm-12">
+            <h4>
+                Amount Due : @((Model.Invoice.InvoiceAmount + (Model.Invoice.InvoiceAmount * WebConfigurationSettings.VAT)).ToString("C"))
+            </h4>
+        </div>
+    </div>
+    <hr />
+    </>
+    <p>
+        @if (Model.Invoice.Paid)
+        {
+            <a id="btnPrint" href="#" class="btn btn-outline-primary" onclick="Print()"><i class="fa fa-print"></i> Print</a><span>&nbsp;</span><a id="btnBack" class="btn btn-outline-dark" href="@(Url.Action("Index"))">Back</a>
+
+        }
+        else
+        { <a id="btnPaid" href="#" class="btn btn-outline-success"><i class="fa fa-check"></i> Update Paid</a><span>&nbsp;</span><a id="btnPrint" href="#" class="btn btn-outline-primary" onclick="Print()"><i class="fa fa-print"></i> Print</a><span>&nbsp;</span><a id="btnBack" class="btn btn-outline-dark" href="@(Url.Action("Index"))">Back</a>
+        }
+    </p>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to approve paid?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                    <a href="#" onclick="paid('@Model.Invoice.Id')" class="btn btn-outline-success"><i class="fa fa-check"></i> Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+    $('#btnPaid').click(function () {
+        $('#exampleModal').modal('show');
+    })
+    function Print() {
+      window.print();
+    }
+
+    function paid(id) {
+        $.ajax({
+                type: "Get",
+                url: "@Url.Action("Paid")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+</script>

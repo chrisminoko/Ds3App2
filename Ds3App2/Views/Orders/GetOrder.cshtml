@@ -1,0 +1,149 @@
+﻿@model Ds3App2.Models.Order
+
+@{
+    ViewBag.Title = "Track";
+}
+
+<h2>Track Order : #@(Model.Reference)</h2>
+<h4>Order Date : @(Model.OrderDate.ToLongDateString())</h4>
+<h5>Status : @(Model.Status)</h5>
+<h5>Amount : @(Model.Amount.ToString("C"))</h5>
+<hr />
+@if (string.IsNullOrEmpty(Model.StatusTraking))
+{
+    <div class="row text-center">
+        <div class="col-sm-3 text-success">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>At Warehouse</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>With Courier</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Out on delivery</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Delivered</h6>
+        </div>
+    </div>
+}
+else if (Model.StatusTraking == "WithCourier")
+{
+    <div class="row text-center">
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>At Warehouse</h6>
+        </div>
+        <div class="col-sm-3 text-success">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>With Courier</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Out on delivery</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Delivered</h6>
+        </div>
+    </div>
+}
+else if (Model.StatusTraking == "OutOnDelivery")
+{
+    <div class="row text-center">
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>At Warehouse</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>With Courier</h6>
+        </div>
+        <div class="col-sm-3 text-success">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Out on delivery</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Delivered</h6>
+        </div>
+    </div>
+}
+else if (Model.StatusTraking == "Delivered")
+{
+    <div class="row text-center">
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>At Warehouse</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>With Courier</h6>
+        </div>
+        <div class="col-sm-3">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Out on delivery</h6>
+        </div>
+        <div class="col-sm-3 text-success">
+            <i class="fas fa-truck fa-3x"></i>
+            <h6>Delivered</h6>
+        </div>
+    </div>
+}
+<hr />
+<p>
+    @if (Model.StatusTraking != "Delivered")
+    {
+        <a id="btnNext" class="btn btn-outline-success" href="#">Move to Next Stage</a><span>&nbsp;</span><a class="btn btn-outline-danger" href="@(Url.Action("IndexAdmin"))">Back</a>
+
+    }
+    else
+    {
+        <a class="btn btn-outline-danger" href="@(Url.Action("IndexAdmin"))">Back</a>
+
+    }
+</p>
+
+<div class="modal fade" id="modalNext" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to update this?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                <button onclick="complete('@Model.Id')" type="button" class="btn btn-outline-success"><i class="fa fa-check"></i> Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+    $('#btnNext').click(function () {
+        $('#modalNext').modal('show');
+    })
+     function complete(id) {
+         $.ajax({
+                type: "Get",
+                url: "@Url.Action("Update")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+</script>

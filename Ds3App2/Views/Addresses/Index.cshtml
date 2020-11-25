@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Ds3App2.Models.Address>
+
+@{
+    ViewBag.Title = "Index";
+}
+<style>
+  .cust {
+        color: darkgray !important;
+    }
+
+    .custactive {
+        color: black !important;
+    }
+</style>
+<h2>My Profile</h2>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link cust" href="@(Url.Action("Edit","Customers"))">Personal</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link cust" href="@(Url.Action("Index","Vehicles"))">Vehicles</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active custactive" href="@(Url.Action("Index","Addresses"))">Addresses</a>
+    </li>
+</ul>
+<br />
+
+<p>
+    <a class="btn btn-primary" href="@(Url.Action("Create"))"><i class="fas fa-plus"></i> Add Address</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.StreetNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StreetName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Surburb)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.City)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StreetNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StreetName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Surburb)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PostalCode)
+            </td>
+            <td>
+                <a href="@(Url.Action("Edit", new { id = item.Id }))"><i class="fas fa-edit" title="Edit"></i></a>&nbsp;
+                <a href="#" onclick="deleteItem('@item.Id')"><i class="fas fa-trash text-danger" title="Delete"></i></a>
+            </td>
+        </tr>
+    }
+
+</table>
+<script>
+     function deleteItem(id) {
+        var doDelete = confirm("Are you sure you want to delete this?");
+        if (doDelete) {
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("Delete")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+        }
+    }
+</script>

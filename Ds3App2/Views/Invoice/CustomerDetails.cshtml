@@ -1,0 +1,79 @@
+﻿@model Ds3App2.Models.Invoice
+@using Ds3App2.Models
+@{
+    ApplicationDbContext db = new ApplicationDbContext();
+    var user = db.Users.Where(u => u.Id == Model.CustomerId).FirstOrDefault();
+    ViewBag.Title = "Details";
+    string status = "";
+    if (Model.Paid)
+    {
+        status = "Paid";
+    }
+    else
+    {
+        status = "Not Paid";
+    }
+}
+<style>
+    @@media print {
+        #btnPaid {
+            display: none;
+        }
+
+        #btnPrint {
+            display: none;
+        }
+
+        #btnBack {
+            display: none;
+        }
+    }
+</style>
+<div id="id=" divPrint"">
+    <h2>Invoice</h2>
+    <hr />
+    <h3>
+        Invoice Date :  @(Model.DateTimeStamp.ToLongDateString())<br />
+        Status : @status
+    </h3>
+    <p>
+        To:<br />
+        @user.FirstName @user.LastName<br />
+        Email : @user.Email<br />
+        Contact : @user.Contact
+    </p>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            Booking Reference: @(Model.Reference)
+        </div>
+        <div class="col-sm-12">
+            Total Material : @(Model.TotalMaterial)
+        </div>
+        <div class="col-sm-12">
+            Total Cost of Material : @(Model.CostOfMaterial.ToString("C"))
+        </div>
+        <div class="col-sm-12">
+            Total Cost of Service : @(Model.CostOfLabour.ToString("C"))
+        </div>
+        <div class="col-sm-12">
+            <h4>
+                Amount Due : @(Model.InvoiceAmount.ToString("C"))
+            </h4>
+        </div>
+    </div>
+    <hr />
+</div>
+<p>
+
+        <a id="btnPrint" href="#" class="btn btn-outline-primary" onclick="Print()"><i class="fa fa-print"></i> Print</a><span>&nbsp;</span><a id="btnBack" class="btn btn-outline-dark" href="@(Url.Action("Index"))">Back</a>
+</p>
+
+
+<script>
+
+    function Print() {
+      window.print();
+    }
+
+</script>

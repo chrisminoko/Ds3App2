@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Ds3App2.Models.JobCardTask>
+@using Ds3App2.Models
+@{
+    ViewBag.Title = "";
+    ApplicationDbContext db = new ApplicationDbContext();
+    var booking = db.Bookings.Find(Model.FirstOrDefault().BookingId);
+}
+<h2>Job Card : Booking Reference #@(booking.Reference)</h2>
+<h4>Add Tasks</h4>
+<h6>
+    Estimated Cost :  @db.ServiceType.FirstOrDefault(s => s.Type.Trim() == booking.ServiceType.Trim()).Price.ToString("C")<br />
+</h6>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.JobTask)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ServiceType)
+        </th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @db.JobTask.Find(item.JobTask).Job
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceType)
+            </td>
+            <td>
+                @if (!item.IsAdded)
+                {
+                    <a href="#" onclick="add('@item.Id')" class="btn btn-outline-success btn-sm"><i class="fa fa-plus"></i></a>
+                }
+                else
+                {
+                    <a href="#" onclick="minus('@item.Id')" class="btn btn-outline-danger btn-sm"><i class="fa fa-minus"></i></a>
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+@if (!Model.Any(m => m.IsAdded))
+{
+    <button disabled class="btn btn-outline-primary">Next</button>
+}
+else
+{
+    <a href="@(Url.Action("Next", new { id = Model.FirstOrDefault().BookingId }))" class="btn btn-outline-primary">Next</a>
+}
+
+<script>
+     function add(id) {
+        $.ajax({
+                type: "Get",
+                url: "@Url.Action("Add")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+    function minus(id) {
+        $.ajax({
+                type: "Get",
+                url: "@Url.Action("Minus")?id=" + id,
+                async: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (e) {
+                    return;
+                }
+            });
+    }
+</script>
