@@ -32,7 +32,7 @@
                     Brand: @Html.DisplayFor(modelItem => item.Brand)<br />
                     Price: @(item.Price.ToString("c"))<br />
                     Instock: @Html.DisplayFor(modelItem => item.StockQuantity)<br /><br />
-                    <a class="btn btn-outline-secondary" title="Add to cart" href="#" onclick="addItem('@item.Id')"><i class="fas fa-cart-plus"></i> Add to cart</a>
+                    <a class="btn btn-outline-secondary" title="Add to cart"  onclick="addItem('@item.Id')"><i class="fas fa-cart-plus"></i> Add to cart</a>
                 </p>
             </div>
         </div>
