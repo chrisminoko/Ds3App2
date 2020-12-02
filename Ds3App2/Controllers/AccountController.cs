@@ -168,9 +168,10 @@ namespace Ds3App2.Controllers
                             Email = model.Email,
                             UserId = user.Id
                         });
-                        await context.SaveChangesAsync();
+                       
                         var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
                         userManager.AddToRole(user.Id, "Customer");
+                        await context.SaveChangesAsync();
                     }
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
