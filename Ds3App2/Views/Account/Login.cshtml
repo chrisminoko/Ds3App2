@@ -2,67 +2,94 @@
 @model LoginViewModel
 @{
     ViewBag.Title = "Log in";
+    Layout = null;
 }
 
 
-<div class="row">
-    <div class="col-md-3">
+<!DOCTYPE html>
+<html lang="en">
 
-    </div>
-    <div class="col-md-6">
-        <h2>@ViewBag.Title.</h2>
-        <section id="loginForm">
-            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-            {
-                @Html.AntiForgeryToken()
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+    <meta name="author" content="AdminKit">
+    <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
 
-                <hr />
-                <p>Use a local account to log in.</p>
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                <div class="form-group">
-                    <div class="col-md-12">
-                        @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+    <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
 
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control cust" })
-                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+    <title>Sign In </title>
 
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control cust" })
-                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-12">
-                        <div class="checkbox">
-                            @Html.CheckBoxFor(m => m.RememberMe)
-                            @Html.LabelFor(m => m.RememberMe)
+    <link href="~/Design/css/app.css" rel="stylesheet">
+</head>
+
+<body>
+    <main class="d-flex w-100">
+        <div class="container d-flex flex-column">
+            <div class="row vh-100">
+                <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+                    <div class="d-table-cell align-middle">
+
+                        <div class="text-center mt-4">
+                            <h1 class="h2">Welcome back, Charles</h1>
+                            <p class="lead">
+                                Sign in to your account to continue
+                            </p>
                         </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-12">
-                        <input type="submit" style="max-width:100%" value="Log in" class="btn btn-outline-light btn-block" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-12">
-                        @Html.ActionLink("Register as a new user", "Register")
-                    </div>
-                </div>
 
-                @* Enable this once you have account confirmation enabled for password reset functionality
-            <p>
-                @Html.ActionLink("Forgot your password?", "ForgotPassword")
-            </p>*@
-            }
-        </section>
-    </div>
-</div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="m-sm-4">
+                                    <div class="text-center">
+                                        <img src="~/Design/img/avatars/avatar.jpg" alt="Charles Hall" class="img-fluid rounded-circle" width="132" height="132" />
+                                    </div>
+                                    @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+                                            @Html.TextBoxFor(m => m.Email, new { placeholder = "Email", @class = "form-control form-control-lg" })
+                                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Password</label>
+                                            @Html.PasswordFor(m => m.Password, new { placeholder = "Password", @class = "form-control form-control-lg" })
+                                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                            <small>
+                                                <a href="">Forgot password?</a>
+                                            </small>
+                                        </div>
+                                        <div>
+                                            <label class="form-check">
+
+                                                @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input" })
+                                                <span class="form-check-label">
+                                                    Remember me next time
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <div class="text-center mt-3">
+
+                                            <input type="submit" style="max-width:100%" value="Sign in" class="btn btn-lg btn-primary" />
+
+                                        </div>
+                                    }
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="~/Design/js/app.js"></script>
+
+</body>
+
+</html>
